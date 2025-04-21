@@ -19,5 +19,3 @@ secret.txt
 logs/
 *.log
 
-# test파일
-test.ipynb
