@@ -1,4 +1,4 @@
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Manager
 from eye_tracker import run_eye_tracker
 # from face_mesh_viewer import run_face_mesh_viewer
 from ipc_listener import run_listener
@@ -10,12 +10,15 @@ if __name__ == "__main__":
     SHOW_FACE_MESH_IN_TRACKER = True
     USE_UNREAL_SEND = False
 
+    manager = Manager()
+    stop_event = manager.Event()
     q = Queue()
     processes = []
 
     if USE_EYE_TRACKING:
-        processes.append(Process(target=run_eye_tracker, args=(q, SHOW_FACE_MESH_IN_TRACKER)))
-        processes.append(Process(target=run_listener, args=(q,)))
+        processes.append(Process(target=run_eye_tracker, args=(q, SHOW_FACE_MESH_IN_TRACKER, stop_event)))
+        if USE_UNREAL_SEND:
+            processes.append(Process(target=run_listener, args=(q,stop_event)))
 
     if USE_UNREAL_SEND:
         unreal_q = get_queue()
