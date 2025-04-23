@@ -20,5 +20,4 @@ logs/
 *.log
 
 #
-*.wav
-*.pdf
+data/
