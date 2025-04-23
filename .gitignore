@@ -19,13 +19,5 @@ secret.txt
 logs/
 *.log
 
-# test 파일
-test.ipynb
-
-# ===== 추가 =====
-# data 폴더 전체 무시
+#
 data/
-
-# PDF, WAV 파일 무시
-*.pdf
-*.wav
