@@ -3,6 +3,7 @@ import os
 import time
 import threading
 import queue
+# 잘렷을 때 가정해서
 
 PIPE_NAME = r'\\.\pipe\unreal_pipe'
 _q = queue.Queue()
