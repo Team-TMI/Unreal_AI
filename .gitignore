@@ -19,3 +19,6 @@ secret.txt
 logs/
 *.log
 
+#
+*.wav
+*.pdf
