@@ -1,6 +1,7 @@
 import time
 import queue
-import struct
+from utils.packet_utils import dict_to_packet
+
 
 PIPE_NAME = r'\\.\pipe\unreal_pipe'
 _q = queue.Queue()
@@ -13,16 +14,15 @@ def pipe_sender():
             with open(PIPE_NAME, 'wb') as pipe:
                 print("✅ Unreal과 파이프 연결됨")
                 while True:
-                    coords = _q.get()
-                    if isinstance(coords, tuple):
-                        x, y = coords
-                        message = f"{x},{y}\n"
-                        pipe.write(message)
+                    data = _q.get()
+                    if isinstance(data, dict):
+                        packed = dict_to_packet(data)
+                        pipe.write(packed)
                         pipe.flush()
-                        print(f"🚀 보냄 → {message.strip()}")
+                        print(f"🚀 패킷 전송 완료 (quiz_id={data['quiz_id']}, x={data['x']}, y={data['y']})")
         except Exception as e:
             print(f"❌ 파이프 연결 실패, 재시도 중... ({e})")
-            time.sleep(1)
+            time.sleep(2)
 
 def get_queue():
     return _q
@@ -31,7 +31,7 @@ def get_queue():
 def forward_to_unreal(src_q, dest_q):
     while True:
         try:
-            coords = src_q.get(timeout=0.1)
-            dest_q.put(coords)
+            data = src_q.get(timeout=0.1)
+            dest_q.put(data)
         except queue.Empty:
             continue

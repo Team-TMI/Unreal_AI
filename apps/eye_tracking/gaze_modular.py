@@ -119,8 +119,6 @@ def run_gaze_estimation(q, show_face_mesh=False, stop_event=None):
                     cv2.putText(screen, blink_text, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
                     if not stop_event.is_set():
                         q.put({
-                            "type": "response",
-                            "data": {
                                 "quiz_id": 1,
                                 "screen_w": screen_w,
                                 "screen_h": screen_h,
@@ -128,7 +126,6 @@ def run_gaze_estimation(q, show_face_mesh=False, stop_event=None):
                                 "y": gaze_y,
                                 "blink": int(blink_state),
                                 "state": 100
-                            }
                         })
 
         key = cv2.waitKey(1) & 0xFF

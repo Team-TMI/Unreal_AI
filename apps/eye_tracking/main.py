@@ -1,7 +1,6 @@
 from multiprocessing import Process, Queue, Event
 # from gaze_tracker import run_gaze_estimation
 from gaze_modular import run_gaze_estimation
-from ipc_listener import run_listener
 from unreal_pipe_sender import pipe_sender, get_queue, forward_to_unreal
 from threading import Thread
 
@@ -22,18 +21,21 @@ if __name__ == "__main__":
     q = Queue()
     processes = []
 
+    # 언리얼로 보내지 않을 때 Queue 소모
     if not USE_UNREAL_SEND:
         Thread(target=queue_drain_worker, args=(q, stop_event), daemon=True).start()
 
+    # 이거 안쓰고 어캄
     if USE_GAZE_ESTIMATION:
         processes.append(Process(target=run_gaze_estimation, args=(q, SHOW_FACE_MESH_IN_TRACKER, stop_event)))
 
+    # Unreal 전송용 스레드
     if USE_UNREAL_SEND:
-        processes.append(Process(target=run_listener, args=(q,stop_event)))
         unreal_q = get_queue()
         # ✅ Thread로 실행 (queue.Queue 호환)
         Thread(target=pipe_sender, daemon=True).start()
         Thread(target=forward_to_unreal, args=(q, unreal_q), daemon=True).start()
+
 
     for p in processes:
         p.start()
