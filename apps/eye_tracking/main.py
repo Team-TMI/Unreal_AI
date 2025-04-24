@@ -1,5 +1,6 @@
 from multiprocessing import Process, Queue, Event
-from gaze_tracker import run_gaze_estimation
+# from gaze_tracker import run_gaze_estimation
+from gaze_modular import run_gaze_estimation
 from ipc_listener import run_listener
 from unreal_pipe_sender import pipe_sender, get_queue, forward_to_unreal
 from threading import Thread
