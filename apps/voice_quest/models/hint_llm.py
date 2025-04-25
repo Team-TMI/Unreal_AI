@@ -4,7 +4,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import OpenAIEmbeddings
 from operator import itemgetter
-from llm_base import QuestLLM
+from models.llm_base import QuestLLM
 import numpy as np
 
 

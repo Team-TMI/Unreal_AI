@@ -46,23 +46,26 @@ def quiz_notify(raw_data, llm, answer):
         return None
 
 def wav_request(raw_data, llm, answer, reconstructor, stt_engine):
-
     _, _, session_id, player_id, quiz_id, answer_start, index, fin, total_size, chunk_size, audio_data = struct.unpack(wav_request_format, raw_data)
+    
     reconstructed_data = reconstructor.receive_packet(
         quiz_id=quiz_id,
         start=answer_start,
-        index = index,
-        fin = fin,
+        index=index,
+        fin=fin,
         total_size=total_size,
         chunk_size=chunk_size,
         raw_data=audio_data
     )
 
+    if not fin:  
+        # 아직 다 안 모였으면 None 리턴해서 응답 안 하게
+        return None
+
     if reconstructed_data:
         user_word = stt_engine.stt(reconstructed_data)
-
         hint = llm.invoke(user_word)
-        success = hint['similarity'] > 0.92 # 임시로 했습니다
+        success = 1 if hint['similarity'] > 0.92 else 0
         payload_size = 1 + 4 + 1 + 1 + 4 + len(hint['response'].encode("utf-8"))
         hint_response = struct.pack(
             "<BH100sBBf?BI",
@@ -73,7 +76,8 @@ def wav_request(raw_data, llm, answer, reconstructor, stt_engine):
             quiz_id,
             hint['similarity'],
             success,
-            answer,
+            fin,
             len(hint['response'].encode("utf-8"))
         ) + hint['response'].encode("utf-8")
+
         return hint_response
