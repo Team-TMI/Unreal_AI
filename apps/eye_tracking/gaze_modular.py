@@ -30,8 +30,8 @@ def run_gaze_estimation(q, show_face_mesh=False, stop_event=None):
     corner_points = [
         (margin, margin),
         (screen_w - margin, margin),
-        (margin, screen_h - margin),
-        (screen_w - margin, screen_h - margin)
+        (screen_w - margin, screen_h - margin),
+        (margin, screen_h - margin)
     ]
     instructions = [
         "Look at top-left corner and press 'w'",
@@ -132,13 +132,31 @@ def run_gaze_estimation(q, show_face_mesh=False, stop_event=None):
         if key == ord('w') and not calibration_complete and calibration_step < 4:
             calibration_points.append((eye_x, eye_y))
             calibration_eye_open_list.append(eye_openness_normalized)
+
+            if not stop_event.is_set():
+                    q.put({
+                        "type": "calibration",
+                        "quiz_id": 1,
+                        "width": screen_w,
+                        "height": screen_h,
+                        "start": calibration_step + 1,
+                        "end": 0
+                    })
+
             calibration_step += 1
             if calibration_step == 4:
                 blink_detector.open_ref = np.mean(calibration_eye_open_list)
                 calibration_complete = True
 
         if key == ord('q'):
-            if stop_event is not None:
+            if not stop_event.is_set():
+                q.put({
+                    "type": "notify",
+                    "quiz_id": 1,
+                    "start": 1,
+                    "end": 1
+                })
+            if stop_event:
                 print("🛑 Gaze Estimation 종료 신호 전송")
                 stop_event.set()
             break

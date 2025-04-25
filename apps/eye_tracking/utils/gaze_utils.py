@@ -12,7 +12,7 @@ def compute_relative_gaze(eye_x, eye_y, nose_tip_x, nose_tip_y, screen_w, screen
     return gaze_x, gaze_y
 
 # 화면 좌표로 표현 및 보간
-def map_calibrated_gaze(eye_x, eye_y, calibration_points, screen_w, screen_h, prev_x=None, prev_y=None, alpha = 0.5):
+def map_calibrated_gaze(eye_x, eye_y, calibration_points, screen_w, screen_h, prev_x=None, prev_y=None, alpha = 0.3):
     if len(calibration_points) < 4:
         return screen_w // 2, screen_h //2
 
