@@ -5,8 +5,9 @@ import numpy as np
 from utils.face_utils import get_eye_openness, get_face_height
 from utils.gaze_utils import compute_relative_gaze, map_calibrated_gaze
 from utils.blink_detector import BlinkDetector
+from utils.packet_utils import pack_eye_tracking_response
 
-def run_gaze_estimation(q, show_face_mesh=False, stop_event=None):
+def run_gaze_estimation(pipe=None, show_face_mesh=False, stop_event=None):
     screen_w, screen_h = pyautogui.size()
     cap = cv2.VideoCapture(0)
     print(f"Gaze Estimation, Camera resolution: {cap.get(cv2.CAP_PROP_FRAME_WIDTH)} x {cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
@@ -117,47 +118,37 @@ def run_gaze_estimation(q, show_face_mesh=False, stop_event=None):
                     cv2.circle(screen, (gaze_x, gaze_y), 20, (0, 0, 255), -1)
                     blink_text = f"Closed Count: {blink_count}"
                     cv2.putText(screen, blink_text, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
-                    if not stop_event.is_set():
-                        q.put({
-                                "quiz_id": 1,
-                                "screen_w": screen_w,
-                                "screen_h": screen_h,
-                                "x": gaze_x,
-                                "y": gaze_y,
-                                "blink": int(blink_state),
-                                "state": 100
-                        })
+
+                    if pipe:
+                        try:
+                            packet = pack_eye_tracking_response(
+                                quiz_id=1,
+                                x=float(gaze_x),
+                                y=float(gaze_y),
+                                blink=int(blink_state),
+                                state=100
+                            )
+                            pipe.write(packet)
+                            pipe.flush()
+                            print(f"📤 좌표 전송: ({gaze_x}, {gaze_y}) | blink={blink_state}")
+                        except Exception as e:
+                            print(f"❌ Unreal 전송 실패: {e}")
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord('w') and not calibration_complete and calibration_step < 4:
             calibration_points.append((eye_x, eye_y))
             calibration_eye_open_list.append(eye_openness_normalized)
-
-            if not stop_event.is_set():
-                    q.put({
-                        "type": "calibration",
-                        "quiz_id": 1,
-                        "width": screen_w,
-                        "height": screen_h,
-                        "start": calibration_step + 1,
-                        "end": 0
-                    })
+            print(f"📍 Calibration Step {calibration_step + 1} 저장 완료")
 
             calibration_step += 1
             if calibration_step == 4:
                 blink_detector.open_ref = np.mean(calibration_eye_open_list)
                 calibration_complete = True
+                print("✅ 캘리브레이션 완료")
 
         if key == ord('q'):
-            if not stop_event.is_set():
-                q.put({
-                    "type": "notify",
-                    "quiz_id": 1,
-                    "start": 1,
-                    "end": 1
-                })
+            print("🛑 Gaze Estimation 종료 신호 전송")
             if stop_event:
-                print("🛑 Gaze Estimation 종료 신호 전송")
                 stop_event.set()
             break
 

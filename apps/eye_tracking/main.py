@@ -1,53 +1,25 @@
-from multiprocessing import Process, Queue, Event
-# from gaze_tracker import run_gaze_estimation
+from multiprocessing import Process, Event
 from gaze_modular import run_gaze_estimation
-from unreal_pipe_sender import pipe_sender, get_queue, forward_to_unreal
-from threading import Thread
-
-
-def queue_drain_worker(q, stop_event):
-    while not stop_event.is_set():
-        try:
-            q.get(timeout=1)
-        except:
-            pass
+from unreal_pipe_sender import start_pipe_server
 
 if __name__ == "__main__":
     USE_GAZE_ESTIMATION = True
     SHOW_FACE_MESH_IN_TRACKER = True
-    USE_UNREAL_SEND = True
+    USE_PIPE_SERVER = True
 
     stop_event = Event()
-    q = Queue()
     processes = []
 
-    # 언리얼로 보내지 않을 때 Queue 소모
-    if not USE_UNREAL_SEND:
-        Thread(target=queue_drain_worker, args=(q, stop_event), daemon=True).start()
-
-    # 이거 안쓰고 어캄
     if USE_GAZE_ESTIMATION:
-        processes.append(Process(target=run_gaze_estimation, args=(q, SHOW_FACE_MESH_IN_TRACKER, stop_event)))
+        processes.append(Process(target=run_gaze_estimation, args=(None, SHOW_FACE_MESH_IN_TRACKER, stop_event)))
 
-    # Unreal 전송용 스레드
-    if USE_UNREAL_SEND:
-        unreal_q = get_queue()
-        # ✅ Thread로 실행 (queue.Queue 호환)
-        Thread(target=pipe_sender, daemon=True).start()
-        Thread(target=forward_to_unreal, args=(q, unreal_q), daemon=True).start()
-
+    if USE_PIPE_SERVER:
+        processes.append(Process(target=start_pipe_server, args=(stop_event,)))
 
     for p in processes:
         p.start()
 
     for p in processes:
         p.join()
-
-    try:
-        q.close()
-        q.join_thread()
-        print("✅ main.py: Queue 닫기 완료")
-    except Exception as e:
-        print(f"⚠️ main.py: Queue 종료 중 오류: {e}")
 
     print("✅ 모든 프로세스 정상 종료")

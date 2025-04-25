@@ -1,95 +1,49 @@
-import time
-import queue
+import win32pipe, win32file, pywintypes
 import struct
-from utils.packet_utils import pack_eye_tracking_request, pack_eye_tracking_response, pack_eye_tracking_notify
-
+from utils.packet_utils import pack_eye_tracking_response
 
 PIPE_NAME = r'\\.\pipe\unreal_pipe'
-_q = queue.Queue()      
-
-def pipe_sender():
-    print(f"📡 Unreal 파이프로 전송 시도 중: {PIPE_NAME}")
-    while True:
-        try:
-            with open(PIPE_NAME, 'wb') as pipe:
-                print("✅ Unreal과 파이프 연결됨")
-                while True:
-                    data = _q.get()
-                    if isinstance(data, dict):
-                        if data.get("type") == "calibration":
-                            packed = pack_eye_tracking_request(
-                                quiz_id = data["quiz_id"],
-                                width = data["width"],
-                                height = data["height"],
-                                start = data["start"],
-                                end = data["end"]
-                            )
-                        elif data.get("type") == "notify":
-                            packed = pack_eye_tracking_notify(
-                                quiz_id = data["quiz_id"],
-                                settingStart = data["settingstart"],
-                                start = data["start"],
-                                end = data["end"]
-                            )
-                        else:
-                            packed = pack_eye_tracking_response(
-                                quiz_id = data["quiz_id"],
-                                x = data["x"],
-                                y = data["y"],
-                                blink = data["blink"],
-                                state = data["state"]
-                            )
-                        pipe.write(packed)
-                        pipe.flush()
-                        print(f"🚀 패킷 전송 완료")
-        except Exception as e:
-            print(f"❌ 파이프 연결 실패, 재시도 중... ({e})")
-            time.sleep(2)
-
-def get_queue():
-    return _q
-
-
-# 다른 큐에서 받아서 Unreal을 통해 보내는 forward 함수
-def forward_to_unreal(src_q, dest_q):
-    while True:
-        try:
-            data = src_q.get(timeout=0.1)
-            dest_q.put(data)
-        except queue.Empty:
-            continue
-
-
-# Unreal에서 보내는 Notify 파트 수신 함수
 NOTIFY_STRUCT_FORMAT = '<BBBB'  # QuizID, SettingStart, Start, End
 
-def start_pipe_receiver(on_notify_callback):
-    print(f"🔼 Unreal 파이프 리시버 시작: {PIPE_NAME}")
+def start_pipe_server(stop_event=None):
+    print(f"📡 [Pipe] Named Pipe 서버 모드 시작 대기 중: {PIPE_NAME}")
+    pipe = win32pipe.CreateNamedPipe(
+        PIPE_NAME,
+        win32pipe.PIPE_ACCESS_DUPLEX,
+        win32pipe.PIPE_TYPE_BYTE | win32pipe.PIPE_READMODE_BYTE | win32pipe.PIPE_WAIT,
+        1, 65536, 65536, 0, None
+    )
+    print("✅ [Pipe] Named Pipe 생성 완료")
+
+    try:
+        win32pipe.ConnectNamedPipe(pipe, None)
+        print("🔗 [Pipe] 클라이언트가 연결됨 (Unreal)")
+        handle_client(pipe, stop_event)
+    except Exception as e:
+        print(f"❌ [Pipe] 연결 실패: {e}")
+
+def handle_client(pipe, stop_event):
     while True:
         try:
-            with open(PIPE_NAME, 'rb') as pipe:
-                print("✅ Unreal 파이프와 연결됨 (수신 대기 중)")
-                while True:
-                    data = pipe.read(4)  # NotifyMessage = 4 bytes
-                    if not data:
-                        continue
+            data = win32file.ReadFile(pipe, 4)[1]
+            if len(data) == 4:
+                quiz_id, setting_start, start, end = struct.unpack(NOTIFY_STRUCT_FORMAT, data)
+                print(f"📥 [Pipe] Notify 수신 → QuizID={quiz_id}, SettingStart={setting_start}, Start={start}, End={end}")
 
-                    if len(data) != 4:
-                        print(f"⚠️ 수신 패키스 길이 이상함: {len(data)} bytes")
-                        continue
+                if setting_start == 1:
+                    print("🛠️ [Pipe] 캘리브레이션 시작 신호 수신됨")
+                elif start == 1:
+                    print("▶️ [Pipe] 게임 시작 신호 수신됨")
+                elif end == 1:
+                    print("⛔ [Pipe] 게임 종료 신호 수신됨")
+                    if stop_event:
+                        stop_event.set()
 
-                    quiz_id, setting_start, start, end = struct.unpack(NOTIFY_STRUCT_FORMAT, data)
+                # 예시 응답 좌표 (실제 gaze_modular 연동 가능)
+                response = pack_eye_tracking_response(quiz_id, 500.0, 300.0, 0, 1)
+                win32file.WriteFile(pipe, response)
+                print("🚀 [Pipe] 응답 전송 완료")
 
-                    print(f"🌌 수신된 Notify => QuizID: {quiz_id}, SettingStart: {setting_start}, Start: {start}, End: {end}")
-
-                    if on_notify_callback:
-                        on_notify_callback({
-                            'quiz_id': quiz_id,
-                            'setting_start': setting_start,
-                            'start': start,
-                            'end': end
-                        })
-
-        except Exception as e:
-            print(f"❌ 파이프 연결 실패 또는 수신 오류: {e}, 재시도 중...")
-            time.sleep(2)
+        except pywintypes.error as e:
+            print(f"❌ [Pipe] 클라이언트 연결 종료 또는 오류: {e}")
+            break
