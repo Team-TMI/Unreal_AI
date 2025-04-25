@@ -3,21 +3,19 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
+from dotenv import load_dotenv
+load_dotenv()
+
 import re
 
-loader = PyMuPDFLoader("./data/PDF/Epilogue.pdf")
-docs = loader.load()
-
 def preprocess(text):
-    new_text = text.replace("Document", "")
-    return new_text
-
-for i in range(3):
-    docs[i].page_content = preprocess(docs[i].page_content)
+    """텍스트 전처리 함수."""
+    return text.replace("Document", "")
 
 def split_with_bracket_keyword(documents):
+    """[keyword]\n 기준으로 문서 분할."""
     result = []
-    pattern = r"\[(.*?)\]\n"  
+    pattern = r"\[(.*?)\]\n"
 
     for doc in documents:
         text = doc.page_content
@@ -38,18 +36,34 @@ def split_with_bracket_keyword(documents):
                 )
     return result
 
-# keyword 기준으로 먼저 쪼개
-split_docs = split_with_bracket_keyword(docs)
+if __name__ == "__main__":
+    # PDF 로드
+    loader = PyMuPDFLoader("./data/PDF/Epilogue.pdf")
+    docs = loader.load()
 
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=100,
-    separators=["\n", " "] 
-)
+    # 전처리
+    for i in range(len(docs)):
+        docs[i].page_content = preprocess(docs[i].page_content)
 
-chunks = splitter.split_documents(split_docs)
+    # [keyword] 기준으로 쪼개기
+    split_docs = split_with_bracket_keyword(docs)
 
-# Vector DB에 저장 코드
-embedding = OpenAIEmbeddings()
-vector_db = Chroma.from_documents(documents=chunks, embedding=embedding, persist_directory="./data/chroma_db", collection_name="openai")
-vector_db.persist()
+    # chunk 나누기
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=100,
+        separators=["\n", " "]
+    )
+    chunks = splitter.split_documents(split_docs)
+
+    # Vector DB 저장
+    embedding = OpenAIEmbeddings()
+    vector_db = Chroma.from_documents(
+        documents=chunks,
+        embedding=embedding,
+        persist_directory="./data/chroma_db",
+        collection_name="openai"
+    )
+    vector_db.persist()
+
+    print("벡터 db 저장 완료료")
