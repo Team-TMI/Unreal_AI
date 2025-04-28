@@ -11,15 +11,21 @@ class STTEngine:
         self.model = whisper.load_model("medium")
     
     def base_to_np(self, base64_str):
-        '''base64를 numpy로 변환하는 메서드'''
         wav_bytes = base64.b64decode(base64_str)
         audio_bytes = io.BytesIO(wav_bytes)
         audio, samplerate = sf.read(audio_bytes, dtype="float32")
+
+        print(f"[DEBUG] audio.shape: {audio.shape}, samplerate: {samplerate}")
+
+        if len(audio.shape) > 1:
+            print(f"[WARNING] 다채널 발견! shape: {audio.shape} → 첫 번째 채널만 사용")
+            audio = audio[:, 0]  # 첫 번째 채널만 사용
+
         if samplerate != 16000:
-            print(f"샘플레이트가 16,000Hz가 아닙니다!, 샘플{samplerate}Hz, 오디오{len(audio)}")
+            print(f"[INFO] 샘플레이트가 16,000Hz가 아닙니다. {samplerate}Hz → 16000Hz로 리샘플링")
             audio = librosa.resample(audio, orig_sr=samplerate, target_sr=16000)
             samplerate = 16000
-            print(f"리샘플 후 {samplerate}Hz로 변환 완료~!")
+
         return audio
     
     def stt(self, base64_str):

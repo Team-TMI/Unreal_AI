@@ -56,6 +56,7 @@ class Hint(QuestLLM):
             },
             config={"configurable": {"session_id": session_id}}
         )
+        print(f"[힌트] : {response}")
         similarity = self.similarity(user_word)
         return {
             "response" : response,
