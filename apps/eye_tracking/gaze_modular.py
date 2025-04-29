@@ -1,13 +1,37 @@
 import cv2
+import time
 import mediapipe as mp
 import pyautogui
 import numpy as np
 from utils.face_utils import get_eye_openness, get_face_height
-from utils.gaze_utils import compute_relative_gaze, map_calibrated_gaze
+from utils.gaze_utils import map_calibrated_gaze
 from utils.blink_detector import BlinkDetector
-from utils.packet_utils import pack_eye_tracking_response
+import struct
+import win32file
 
-def run_gaze_estimation(pipe=None, show_face_mesh=False, stop_event=None):
+def pack_eye_tracking_response_with_header(quiz_id, x, y, blink, state):
+   # Payload: EyeTrackingResponseMessage
+    payload = struct.pack('<BffBB', quiz_id, x, y, blink, state)
+
+    # Header: FMessageHeader
+    message_type = 8  # EyeTrackingResponseMessage (from Unreal EMessageType enum)
+    session_id = bytes([1, 0, 0, 0]) + bytes(96)  # 4바이트 ID + 96바이트 패딩해서 총 100바이트
+    player_id = 1
+
+    header_size = 1 + 2 + 100 + 1
+    payload_size = (header_size + len(payload))
+
+    header = struct.pack('<BH100sB', message_type, payload_size, session_id, player_id)
+
+    print(f"실제 전송 패킷 사이즈 : {len(header + payload)} : message size {payload_size}")
+
+    # 최종 패킷 = Header + Payload
+    return header + payload
+
+def run_gaze_estimation(pipe, show_face_mesh=False, stop_event=None):
+    if pipe is None:
+        raise ValueError("🚨 서버에서 넘겨준 pipe가 필요합니다.")
+
     screen_w, screen_h = pyautogui.size()
     cap = cv2.VideoCapture(0)
     print(f"Gaze Estimation, Camera resolution: {cap.get(cv2.CAP_PROP_FRAME_WIDTH)} x {cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
@@ -53,7 +77,7 @@ def run_gaze_estimation(pipe=None, show_face_mesh=False, stop_event=None):
 
     while True:
         if stop_event and stop_event.is_set():
-            print("stop_event 를 통한 루프 종료")
+            print("🛑 stop_event 감지, 루프 종료")
             break
 
         ret, frame = cap.read()
@@ -75,11 +99,6 @@ def run_gaze_estimation(pipe=None, show_face_mesh=False, stop_event=None):
 
                 blink_state, blink_count = blink_detector.update(eye_openness_normalized, blink_detector.open_ref)
 
-                if calibration_complete:
-                    print(f"Normalized: {eye_openness_normalized:.4f}, Ref: {blink_detector.open_ref:.4f}, Blinked: {blink_state}, Total: {blink_count}")
-                else:
-                    print(f"Normalized: {eye_openness_normalized:.4f}, Blinked: {blink_state}, Total: {blink_count}")
-
                 if show_face_mesh and face_mesh_frame is not None:
                     mp_drawing.draw_landmarks(
                         image=face_mesh_frame,
@@ -98,7 +117,6 @@ def run_gaze_estimation(pipe=None, show_face_mesh=False, stop_event=None):
 
                 left_iris = face_landmarks.landmark[468]
                 right_iris = face_landmarks.landmark[473]
-                nose_tip = face_landmarks.landmark[1]
 
                 eye_x = (left_iris.x + right_iris.x) / 2
                 eye_y = (left_iris.y + right_iris.y) / 2
@@ -119,27 +137,24 @@ def run_gaze_estimation(pipe=None, show_face_mesh=False, stop_event=None):
                     blink_text = f"Closed Count: {blink_count}"
                     cv2.putText(screen, blink_text, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
 
-                    if pipe:
-                        try:
-                            packet = pack_eye_tracking_response(
-                                quiz_id=1,
-                                x=float(gaze_x),
-                                y=float(gaze_y),
-                                blink=int(blink_state),
-                                state=100
-                            )
-                            pipe.write(packet)
-                            pipe.flush()
-                            print(f"📤 좌표 전송: ({gaze_x}, {gaze_y}) | blink={blink_state}")
-                        except Exception as e:
-                            print(f"❌ Unreal 전송 실패: {e}")
+                    try:
+                        packet = pack_eye_tracking_response_with_header(
+                            quiz_id=1,
+                            x=float(gaze_x),
+                            y=float(gaze_y),
+                            blink=int(blink_state),
+                            state=100
+                        )
+                        win32file.WriteFile(pipe, packet)
+                        print(f"📤 좌표 '안'전송: ({gaze_x}, {gaze_y}) | blink={blink_state}")
+                    except Exception as e:
+                        print(f"❌ Unreal 전송 실패: {e}")
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord('w') and not calibration_complete and calibration_step < 4:
             calibration_points.append((eye_x, eye_y))
             calibration_eye_open_list.append(eye_openness_normalized)
             print(f"📍 Calibration Step {calibration_step + 1} 저장 완료")
-
             calibration_step += 1
             if calibration_step == 4:
                 blink_detector.open_ref = np.mean(calibration_eye_open_list)

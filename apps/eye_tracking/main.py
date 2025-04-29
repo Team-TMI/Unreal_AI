@@ -1,25 +1,18 @@
-from multiprocessing import Process, Event
-from gaze_modular import run_gaze_estimation
+from multiprocessing import Event
 from unreal_pipe_sender import start_pipe_server
+from gaze_modular import run_gaze_estimation
 
 if __name__ == "__main__":
-    USE_GAZE_ESTIMATION = True
-    SHOW_FACE_MESH_IN_TRACKER = True
-    USE_PIPE_SERVER = True
-
     stop_event = Event()
-    processes = []
+    pipe_ready_event = Event()
 
-    if USE_GAZE_ESTIMATION:
-        processes.append(Process(target=run_gaze_estimation, args=(None, SHOW_FACE_MESH_IN_TRACKER, stop_event)))
+    pipe = start_pipe_server(stop_event=stop_event, pipe_ready_event=pipe_ready_event)
 
-    if USE_PIPE_SERVER:
-        processes.append(Process(target=start_pipe_server, args=(stop_event,)))
+    # 서버 파이프가 열리고 클라이언트 연결까지 완료될 때까지 대기
+    pipe_ready_event.wait()
 
-    for p in processes:
-        p.start()
-
-    for p in processes:
-        p.join()
-
-    print("✅ 모든 프로세스 정상 종료")
+    if pipe is not None:
+        print("🚀 파이프 준비 완료, Gaze Estimation 시작")
+        run_gaze_estimation(pipe=pipe, stop_event=stop_event)
+    else:
+        print("❌ 파이프 생성 실패")
