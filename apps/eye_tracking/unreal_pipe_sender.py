@@ -1,45 +1,72 @@
-import win32pipe, win32file, pywintypes
+import win32pipe, win32file
 import struct
-import threading
-from utils.packet_utils import pack_eye_tracking_response
-from gaze_modular import run_gaze_estimation
+from gaze_modular import run_calibration, run_tracking
+from utils.constants import MessageType, NotifyMessage
 
 PIPE_NAME = r'\\.\pipe\unreal_pipe'
-NOTIFY_STRUCT_FORMAT = '<BBBB'  # QuizID, SettingStart, Start, End
 
-import win32pipe, win32file, pywintypes
-import struct
-import threading
-
-PIPE_NAME = r'\\.\pipe\unreal_pipe'
-NOTIFY_STRUCT_FORMAT = '<BBBB'  # QuizID, SettingStart, Start, End
+state = {
+    "calibrating": False,
+    "tracking": False
+}
 
 def start_pipe_server(stop_event=None, pipe_ready_event=None):
-    print(f"📡 [Pipe] Named Pipe 서버 모드 시작 대기 중: {PIPE_NAME}")
+    print(f"📡 [Pipe] Named Pipe 서버 시작: {PIPE_NAME}")
     pipe = win32pipe.CreateNamedPipe(
         PIPE_NAME,
         win32pipe.PIPE_ACCESS_DUPLEX,
         win32pipe.PIPE_TYPE_BYTE | win32pipe.PIPE_READMODE_BYTE | win32pipe.PIPE_WAIT,
-        2, 65536, 65536, 0, None
+        1, 65536, 65536, 0, None
     )
-    print("🕒 [Pipe] Named Pipe 생성 완료, ConnectNamedPipe() 호출 준비 (메인 스레드)")
 
     try:
         win32pipe.ConnectNamedPipe(pipe, None)
-        print("🔗 [Pipe] ConnectNamedPipe 연결 완료")
-
+        print("🔗 [Pipe] 클라이언트 연결 완료")
         if pipe_ready_event:
             pipe_ready_event.set()
-
-        print("🎯 [Pipe] 클라이언트 연결 대기 중")
+        handle_client(pipe, stop_event)
 
     except Exception as e:
         print(f"❌ [Pipe] 연결 실패: {e}")
 
-    return pipe  # ✅ 여기에 return 추가
-
 
 def handle_client(pipe, stop_event):
-    print("👂 [Pipe] 클라이언트 통신 루프 진입")
-    # 바로 run_gaze_estimation 호출
-    run_gaze_estimation(pipe=pipe, stop_event=stop_event)
+    print("👂 [Pipe] 클라이언트 통신 시작")
+    buffer = b""
+
+    while not stop_event.is_set():
+        try:
+            result, data = win32file.ReadFile(pipe, 1024)
+            buffer += data
+
+            while len(buffer) >= 4:  # 최소 NotifyMessage 크기
+                header = struct.unpack('<BBBB', buffer[:4])
+                quiz_id, setting_start, start, end = header
+                print(f"📩 수신 - QuizID:{quiz_id} SettingStart:{setting_start} Start:{start} End:{end}")
+
+                # 버퍼 정리
+                buffer = buffer[4:]
+
+                # 신호 해석 및 상태 전환
+                if setting_start == 1:
+                    print("🛠️ 칼리브레이션 시작")
+                    state["calibrating"] = True
+                    state["tracking"] = False
+                    run_calibration(pipe)
+
+                elif start == 1:
+                    print("🚀 미션 시작 (좌표 전송)")
+                    state["calibrating"] = False
+                    state["tracking"] = True
+                    run_tracking(pipe, stop_event)
+
+                elif end == 1:
+                    print("🛑 미션 종료 (좌표 전송 멈춤)")
+                    state["tracking"] = False
+
+        except Exception as e:
+            print(f"❗ 통신 오류: {e}")
+            break
+
+    print("📴 파이프 통신 종료")
+    win32file.CloseHandle(pipe)
