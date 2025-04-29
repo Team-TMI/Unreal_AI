@@ -48,6 +48,10 @@ class Hint(QuestLLM):
         similarity = np.dot(user_vec, answer_vec) / (np.linalg.norm(user_vec) * np.linalg.norm(answer_vec))
         return similarity
     
+    def contain_word(self,user_word):
+        contain = self.answer in user_word
+        return contain
+    
     def invoke(self, user_word, session_id="default"):
         response = self.chain.invoke(
             {
@@ -58,7 +62,9 @@ class Hint(QuestLLM):
         )
         print(f"[힌트] : {response}")
         similarity = self.similarity(user_word)
+        contain = self.contain_word(user_word)
         return {
+            "contain": contain,
             "response" : response,
             "similarity" : similarity
         }

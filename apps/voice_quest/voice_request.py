@@ -64,7 +64,7 @@ def wav_request(raw_data, llm, answer, reconstructor, stt_engine):
         user_word = stt_engine.stt(base64_data)
 
         hint = llm.invoke(user_word)
-        success = hint['similarity'] > 0.92 # 임시로 했습니다
+        success = hint['contain']
         payload_size = 1 + 2 + 100 + 1 + 1 + 4 + 1 + 4 + len(hint['response'].encode("utf-8"))
         hint_response = struct.pack(
             "<BH100sBBfBI",                    # 수정된 포맷 (Answer 없음)
