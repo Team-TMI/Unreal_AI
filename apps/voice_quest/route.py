@@ -37,17 +37,14 @@ async def websocket_endpoint(websocket: WebSocket):
             raw_data = await websocket.receive_bytes()
             header_type = raw_data[0]
 
-            if header_type == 3: # QuizNotify
+            if header_type == 3:  # QuizNotify
                 response = quiz_notify(raw_data, quiz_llm, answer)
-                
-            elif header_type == 4: # WaveRequest
-                response = wav_request(raw_data, hint_llm, answer, reconstructor, stt_engine)
-
-            if response is None:
-                await websocket.close(code=1000)
-                break
-            else:
                 await websocket.send_bytes(response)
-            
+
+            elif header_type == 4:  # WaveRequest
+                result = wav_request(raw_data, hint_llm, answer, reconstructor, stt_engine)
+                if result is not None:  
+                    await websocket.send_bytes(result)
+
     except WebSocketDisconnect:
         print("연결 종료")

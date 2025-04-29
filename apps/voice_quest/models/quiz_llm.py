@@ -1,6 +1,6 @@
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import OpenAIEmbeddings
-from llm_base import QuestLLM
+from models.llm_base import QuestLLM
 from operator import itemgetter
 
 class Quiz(QuestLLM):
