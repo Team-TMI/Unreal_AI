@@ -34,6 +34,8 @@ def handle_client(pipe, stop_event):
     print("👂 [Pipe] 클라이언트 통신 시작")
     buffer = b""
 
+    calibration_points = None  # ⭐ 캘리브레이션 결과 저장 변수 추가
+
     while not stop_event.is_set():
         try:
             result, data = win32file.ReadFile(pipe, 1024)
@@ -42,6 +44,12 @@ def handle_client(pipe, stop_event):
             while len(buffer) >= 4:  # 최소 NotifyMessage 크기
                 header = struct.unpack('<BBBB', buffer[:4])
                 quiz_id, setting_start, start, end = header
+
+                if setting_start not in (0, 1) or start not in (0, 1) or end not in (0, 1):
+                    print(f"⚠️ 잘못된 데이터 무시: {header}")
+                    buffer = buffer[4:]
+                    continue  # 무시하고 다음 데이터로 넘어감
+                
                 print(f"📩 수신 - QuizID:{quiz_id} SettingStart:{setting_start} Start:{start} End:{end}")
 
                 # 버퍼 정리
@@ -52,13 +60,13 @@ def handle_client(pipe, stop_event):
                     print("🛠️ 칼리브레이션 시작")
                     state["calibrating"] = True
                     state["tracking"] = False
-                    run_calibration(pipe)
+                    calibration_points = run_calibration(pipe)  # ⭐ 결과 저장
 
                 elif start == 1:
                     print("🚀 미션 시작 (좌표 전송)")
                     state["calibrating"] = False
                     state["tracking"] = True
-                    run_tracking(pipe, stop_event)
+                    run_tracking(pipe, stop_event, calibration_points)  # ⭐ 결과 넘겨줌
 
                 elif end == 1:
                     print("🛑 미션 종료 (좌표 전송 멈춤)")
