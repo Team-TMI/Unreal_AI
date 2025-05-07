@@ -1,0 +1,6 @@
+opencv-python>=4.5.0
+mediapipe
+pyautogui
+numpy
+python-dotenv
+pywin32
