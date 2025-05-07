@@ -5,7 +5,7 @@ import base64
 
 header_format = "<BH100sB"
 quiz_notify_format = f"{header_format}3B"
-wav_request_format = f"{header_format}BBIBII1024s"
+wav_request_format = f"{header_format}BBIBII30720s"
 
 GAME_DB = {}
 
@@ -43,7 +43,7 @@ def quiz_notify(raw_data, llm, answer):
         return None
 
 def wav_request(raw_data, llm, answer, reconstructor, stt_engine):
-    print("[WaveRequest] 접속 성공")
+
     _, _, session_id, player_id, quiz_id, answer_start, index, fin, total_size, chunk_size, audio_data = struct.unpack(wav_request_format, raw_data)
     reconstructed_data = reconstructor.receive_packet(
         quiz_id=quiz_id,

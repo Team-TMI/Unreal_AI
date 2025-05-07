@@ -4,6 +4,7 @@ import soundfile as sf
 import whisper
 import librosa 
 import base64
+import time
 
 class STTEngine:
     '''Speech to Text 클래스(Whisper모델 사용)'''
@@ -31,6 +32,8 @@ class STTEngine:
     def stt(self, base64_str):
         result = self.model.transcribe(self.base_to_np(base64_str), fp16=False, language="ko")
         print(f"[STT Text] {result['text']}")
+        date = time.strftime("%H:%M:%S")
+        print(f"전송 시각 : {date}")
 
         return result['text']
     
@@ -60,6 +63,8 @@ class WavReconstructor:
 
         if fin == 1:
             print(f"[{quiz_id}] 마지막 패킷 받음. 복원 시작.")
+            date = time.strftime("%H:%M:%S")
+            print(f"받은 시각 : {date}")
             chunks = self.buffers[quiz_id]
             sorted_data = b''.join(chunks[i] for i in sorted(chunks.keys()))
             # 버퍼 정리
