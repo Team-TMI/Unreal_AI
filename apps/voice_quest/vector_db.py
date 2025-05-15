@@ -61,9 +61,9 @@ if __name__ == "__main__":
     vector_db = Chroma.from_documents(
         documents=chunks,
         embedding=embedding,
-        persist_directory="./data/chroma_db",
+        persist_directory="./data/chroma_ver2",
         collection_name="openai"
     )
     vector_db.persist()
 
-    print("벡터 db 저장 완료료")
+    print("벡터 db 저장 완료")

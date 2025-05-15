@@ -5,6 +5,7 @@ import whisper
 import librosa 
 import base64
 import time
+import os
 
 class STTEngine:
     '''Speech to Text 클래스(Whisper모델 사용)'''
@@ -50,6 +51,17 @@ class WavReconstructor:
         self.total_sizes[quiz_id] = total_size
         self.chunk_sizes[quiz_id] = chunk_size
 
+    # def save_wav(self, player_id, wav_bytes, samplerate=16000):
+    #     '''복원된 오디오 데이터를 지정된 경로에 WAV 파일로 저장'''
+    #     output_dir = r"C:\wanted\Git_project\Unreal_AI\apps\voice_quest\data\test"
+    #     os.makedirs(output_dir, exist_ok=True)
+    #     output_path = os.path.join(output_dir, f"{player_id}_{int(time.time())}.wav")
+    #     with sf.SoundFile(output_path, mode='w', samplerate=samplerate, channels=1, format='WAV') as f:
+    #         audio_np = np.frombuffer(wav_bytes, dtype=np.float32)
+    #         f.write(audio_np)
+    #     print(f"[{player_id}] WAV 파일 저장 완료: {output_path}")
+    #     return output_path
+
     def receive_packet(self, quiz_id, start, index, fin, total_size, chunk_size, raw_data):
         '''
         start가 1일때 전송 시작 및 버퍼 초기화,
@@ -71,5 +83,6 @@ class WavReconstructor:
             del self.buffers[quiz_id]
             del self.total_sizes[quiz_id]
             del self.chunk_sizes[quiz_id]
+            # path = self.save_wav(player_id, sorted_data)
             return sorted_data
         return None

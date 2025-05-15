@@ -2,6 +2,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import OpenAIEmbeddings
 from models.llm_base import QuestLLM
 from operator import itemgetter
+import re
 
 class Quiz(QuestLLM):
     '''트리거 시작하면 퀴즈를 내는 LLM'''
@@ -22,4 +23,6 @@ class Quiz(QuestLLM):
         return chain
 
     def start_quiz(self):
-        return self.chain.invoke({"answer": self.answer})
+        response = self.chain.invoke({"answer": self.answer})
+        response = re.sub(r"[^가-힣a-zA-Z0-9\s.,!?]", "", response)
+        return response

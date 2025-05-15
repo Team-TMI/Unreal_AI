@@ -6,6 +6,7 @@ from langchain_openai import OpenAIEmbeddings
 from operator import itemgetter
 from models.llm_base import QuestLLM
 import numpy as np
+import re
 
 
 class Hint(QuestLLM):
@@ -63,6 +64,7 @@ class Hint(QuestLLM):
         print(f"[힌트] : {response}")
         similarity = self.similarity(user_word)
         contain = self.contain_word(user_word)
+        response = re.sub(r"[^가-힣a-zA-Z0-9\s.,!?]", "", response)
         return {
             "contain": contain,
             "response" : response,
