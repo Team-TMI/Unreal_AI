@@ -38,7 +38,7 @@ def split_with_bracket_keyword(documents):
 
 if __name__ == "__main__":
     # PDF 로드
-    loader = PyMuPDFLoader("./data/PDF/Epilogue.pdf")
+    loader = PyMuPDFLoader("./data/PDF/Epilouge.pdf")
     docs = loader.load()
 
     # 전처리
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     vector_db = Chroma.from_documents(
         documents=chunks,
         embedding=embedding,
-        persist_directory="./data/chroma_ver2",
+        persist_directory="./data/chroma_ver3",
         collection_name="openai"
     )
     vector_db.persist()
