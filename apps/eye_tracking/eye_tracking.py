@@ -6,8 +6,8 @@ import pyautogui
 import win32file
 from utils.packet_utils import pack_eye_tracking_response_with_header, get_coordinate_pipe
 
+SEND_EVERY_N_FRAMES = 2
 PIPE_SEND = r"\\.\pipe\python_to_unreal"  # Python → Unreal 좌표 전송용 파이프
-alpha = 0.0  # 부드럽게 따라가기 위한 가중치
 
 def run_relative_eye_tracking(screen_w, screen_h, stop_event=None):
     cap = cv2.VideoCapture(0)
@@ -24,6 +24,9 @@ def run_relative_eye_tracking(screen_w, screen_h, stop_event=None):
         return
     print("📡 좌표 전송용 파이프 핸들 획득 완료")
 
+    frame_count = 0
+    distance_points = [0.09, 0.15, 0.2]
+    scale_points = [150000, 80000, 60000]
 
     while stop_event is None or not stop_event.is_set():
         ret, frame = cap.read()
@@ -41,30 +44,40 @@ def run_relative_eye_tracking(screen_w, screen_h, stop_event=None):
             eye_x = (left_iris.x + right_iris.x) / 2
             eye_y = (left_iris.y + right_iris.y) / 2
 
+            left_eye_outer = face[33]
+            right_eye_outer = face[263]
+            current_eye_distance = np.linalg.norm([
+                left_eye_outer.x - right_eye_outer.x,
+                left_eye_outer.y - right_eye_outer.y
+            ])
+            
+            scale = float(np.interp(current_eye_distance, distance_points, scale_points))
+
             if prev_eye_x is not None:
                 dx = eye_x - prev_eye_x
                 dy = eye_y - prev_eye_y
 
-                scale = 80000
                 cursor_x += int(dx * scale)
                 cursor_y += int(dy * scale)
 
                 gaze_x = np.clip(cursor_x, 0, screen_w - 1)
                 gaze_y = np.clip(cursor_y, 0, screen_h - 1)
 
-                try:
-                    packet = pack_eye_tracking_response_with_header(
-                        quiz_id=1,
-                        x=float(gaze_x),
-                        y=float(gaze_y),
-                        blink=0,
-                        state=100
-                    )
-                    win32file.WriteFile(pipe, packet)
-                    print(f"📤 좌표 전송: ({gaze_x}, {gaze_y})")
-                except Exception as e:
-                    print(f"❌ 좌표 전송 실패: {e}")
-                    break
+                frame_count += 1
+                if frame_count % SEND_EVERY_N_FRAMES == 0:
+                    try:
+                        packet = pack_eye_tracking_response_with_header(
+                            quiz_id=1,
+                            x=float(gaze_x),
+                            y=float(gaze_y),
+                            blink=0,
+                            state=100
+                        )
+                        win32file.WriteFile(pipe, packet)
+                        print(f"📤 좌표 전송: ({gaze_x}, {gaze_y}) | 거리: {current_eye_distance:.4f} | 스케일: {scale:.0f}")
+                    except Exception as e:
+                        print(f"❌ 좌표 전송 실패: {e}")
+                        break
 
             prev_eye_x, prev_eye_y = eye_x, eye_y
 
