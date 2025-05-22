@@ -12,7 +12,7 @@ stt_engine = STTEngine()
 reconstructor = WavReconstructor()
 
 def choice_answer():
-    answer_list = ["달빛 연못", "연잎밥"]
+    answer_list = ["달빛 연못", "연잎밥", "삶은 당근", "개구리 동산", "연못 파리", "왕왕벌"]
     return random.choice(answer_list)
 
 @router.websocket("/voice_quest")

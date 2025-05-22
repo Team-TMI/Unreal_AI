@@ -6,6 +6,7 @@ import base64
 header_format = "<BH100sB"
 quiz_notify_format = f"{header_format}3B"
 wav_request_format = f"{header_format}BBIBII1024s"
+# wav_request_format = f"{header_format}BBIBII1024s"
 
 GAME_DB = {}
 
@@ -44,6 +45,17 @@ def quiz_notify(raw_data, llm, answer):
 
 def wav_request(raw_data, llm, answer, reconstructor, stt_engine):
     print("[WaveRequest] 접속 성공")
+    expected_size = struct.calcsize(wav_request_format)
+
+    print(f"[raw_data]{raw_data}")
+    print(f"Expected size: {struct.calcsize(wav_request_format)}")
+    print(f"Received size: {len(raw_data)}")
+    
+    if len(raw_data) < expected_size:
+        print(f"[raw_data]{raw_data}")
+        print(f"[ERROR] wav_request: Expected {expected_size} bytes, but got {len(raw_data)} bytes")
+        return None
+
     _, _, session_id, player_id, quiz_id, answer_start, index, fin, total_size, chunk_size, audio_data = struct.unpack(wav_request_format, raw_data)
     reconstructed_data = reconstructor.receive_packet(
         quiz_id=quiz_id,
