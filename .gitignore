@@ -22,3 +22,10 @@ logs/
 
 #
 data/
+
+# asset 관련 
+img/
+*.png
+outputs/
+
+voice_quest/

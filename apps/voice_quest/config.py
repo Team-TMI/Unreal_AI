@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DB_PARAMS={
-    "persist_directory": "./data/chroma_ver3",
+    "persist_directory": "./data/chroma_new",
     "embedding_function" : OpenAIEmbeddings(),
     "collection_name": "openai"
 }

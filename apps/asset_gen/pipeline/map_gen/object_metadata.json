@@ -1,0 +1,771 @@
+{
+  "술통": {
+    "prop_id": "1001",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "다리 시작": {
+    "prop_id": "1002",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Build)"
+    ],
+    "layer_rule": "normal",
+    "role": "start"
+  },
+  "다리 타일": {
+    "prop_id": "1003",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Build)"
+    ],
+    "layer_rule": "normal",
+    "role": "continue"
+  },
+  "수풀1": {
+    "prop_id": "1004",
+    "category": "Basic",
+    "subcategories": [
+      "(Plant",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "수풀2": {
+    "prop_id": "1005",
+    "category": "Basic",
+    "subcategories": [
+      "(Plant",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "수풀3": {
+    "prop_id": "1006",
+    "category": "Basic",
+    "subcategories": [
+      "(Plant",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "수풀4": {
+    "prop_id": "1007",
+    "category": "Basic",
+    "subcategories": [
+      "(Plant",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "수풀5": {
+    "prop_id": "1008",
+    "category": "Basic",
+    "subcategories": [
+      "(Plant",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "선인장1": {
+    "prop_id": "1009",
+    "category": "Basic",
+    "subcategories": [
+      "(Plant)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "선인장2": {
+    "prop_id": "1010",
+    "category": "Basic",
+    "subcategories": [
+      "(Plant)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무 상자": {
+    "prop_id": "1011",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Build)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "울타리1": {
+    "prop_id": "1012",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Build)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "울타리2": {
+    "prop_id": "1013",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Build)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "땅1": {
+    "prop_id": "1014",
+    "category": "Basic",
+    "subcategories": [
+      "(Soil",
+      "Summer)"
+    ],
+    "layer_rule": "top-only",
+    "role": "neutral",
+    "tile": "땅 타일1"
+  },
+  "땅2": {
+    "prop_id": "1015",
+    "category": "Basic",
+    "subcategories": [
+      "(Soil",
+      "Summer)"
+    ],
+    "layer_rule": "top-only",
+    "role": "neutral",
+    "tile": "땅 타일2"
+  },
+  "땅3": {
+    "prop_id": "1016",
+    "category": "Basic",
+    "subcategories": [
+      "(Soil",
+      "Summer)"
+    ],
+    "layer_rule": "top-only",
+    "role": "neutral",
+    "tile": "땅 타일3"
+  },
+  "땅 타일1": {
+    "prop_id": "1017",
+    "category": "Basic",
+    "subcategories": [
+      "(Soil",
+      "Summer)"
+    ],
+    "layer_rule": "tile-only",
+    "role": "continue"
+  },
+  "땅 타일2": {
+    "prop_id": "1018",
+    "category": "Basic",
+    "subcategories": [
+      "(Soil",
+      "Summer)"
+    ],
+    "layer_rule": "tile-only",
+    "role": "continue"
+  },
+  "땅 타일3": {
+    "prop_id": "1019",
+    "category": "Basic",
+    "subcategories": [
+      "(Soil",
+      "Summer)"
+    ],
+    "layer_rule": "tile-only",
+    "role": "continue"
+  },
+  "집1": {
+    "prop_id": "1020",
+    "category": "Basic",
+    "subcategories": [
+      "(Build)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "집2": {
+    "prop_id": "1021",
+    "category": "Basic",
+    "subcategories": [
+      "(Build)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "집3": {
+    "prop_id": "1022",
+    "category": "Basic",
+    "subcategories": [
+      "(Build)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "부서진 사다리": {
+    "prop_id": "1023",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Build)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "사다리": {
+    "prop_id": "1024",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Build)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "통나무 더미": {
+    "prop_id": "1025",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "땅 플랫폼 1": {
+    "prop_id": "1026",
+    "category": "Basic",
+    "subcategories": [
+      "(Soil)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "땅 플랫폼 2": {
+    "prop_id": "1027",
+    "category": "Basic",
+    "subcategories": [
+      "(Soil)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "바위1": {
+    "prop_id": "1028",
+    "category": "Basic",
+    "subcategories": [
+      "(Stone)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "바위2": {
+    "prop_id": "1029",
+    "category": "Basic",
+    "subcategories": [
+      "(Stone)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "바위3": {
+    "prop_id": "1030",
+    "category": "Basic",
+    "subcategories": [
+      "(Stone)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "그루터기": {
+    "prop_id": "1031",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무1": {
+    "prop_id": "1032",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무2": {
+    "prop_id": "1033",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무3": {
+    "prop_id": "1034",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무4": {
+    "prop_id": "1035",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무5": {
+    "prop_id": "1036",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무6": {
+    "prop_id": "1037",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무7": {
+    "prop_id": "1038",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무8": {
+    "prop_id": "1039",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood",
+      "Summer)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무 줄기1": {
+    "prop_id": "1040",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무 줄기2": {
+    "prop_id": "1041",
+    "category": "Basic",
+    "subcategories": [
+      "(Wood)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "농작지1": {
+    "prop_id": "1042",
+    "category": "Basic",
+    "subcategories": [
+      "(Soil)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "농작지2": {
+    "prop_id": "1043",
+    "category": "Basic",
+    "subcategories": [
+      "(Soil)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "농작지3": {
+    "prop_id": "1044",
+    "category": "Basic",
+    "subcategories": [
+      "(Soil)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "당근이 싫어": {
+    "prop_id": "2009",
+    "category": "Obstacle",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "연잎 방방": {
+    "prop_id": "2002",
+    "category": "Obstacle",
+    "subcategories": [
+      "(Bouncing)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "엄마의 메아리": {
+    "prop_id": "2003",
+    "category": "Obstacle",
+    "subcategories": [
+      "(AI)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "항아리 대포": {
+    "prop_id": "2004",
+    "category": "Obstacle",
+    "subcategories": [
+      "(Firing)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "홍수 났다!": {
+    "prop_id": "2005",
+    "category": "Obstacle",
+    "subcategories": [
+      "(Pad)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "파리잡기": {
+    "prop_id": "2006",
+    "category": "Obstacle",
+    "subcategories": [
+      "(AI)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "꿀벌의 비행": {
+    "prop_id": "2007",
+    "category": "Obstacle",
+    "subcategories": [
+      "(Rotating",
+      "Bouncing)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "나무 망치": {
+    "prop_id": "2008",
+    "category": "Obstacle",
+    "subcategories": [
+      "(Rotating)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "빙글빙글 연근": {
+    "prop_id": "3001",
+    "category": "Platform",
+    "subcategories": [
+      "(Moving)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "끝 포인트": {
+    "prop_id": "3002",
+    "category": "Platform",
+    "subcategories": [
+      "(Ending)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "반짝이는 개구리": {
+    "prop_id": "4001",
+    "category": "Decoration",
+    "subcategories": [
+      "(Fire)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "당근": {
+    "prop_id": "4002",
+    "category": "Decoration",
+    "subcategories": [
+      "(DecorationEtc)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "체크 포인트": {
+    "prop_id": "4003",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "동전": {
+    "prop_id": "4004",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "문": {
+    "prop_id": "4005",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "데이지 꽃": {
+    "prop_id": "4009",
+    "category": "Decoration",
+    "subcategories": [
+      "(Flower)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "꽃1": {
+    "prop_id": "4010",
+    "category": "Decoration",
+    "subcategories": [
+      "(Flower)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "꽃2": {
+    "prop_id": "4011",
+    "category": "Decoration",
+    "subcategories": [
+      "(Flower)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "꽃3": {
+    "prop_id": "4012",
+    "category": "Decoration",
+    "subcategories": [
+      "(Flower)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "꽃4": {
+    "prop_id": "4013",
+    "category": "Decoration",
+    "subcategories": [
+      "(Flower)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "꽃5": {
+    "prop_id": "4014",
+    "category": "Decoration",
+    "subcategories": [
+      "(Flower)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "꽃6": {
+    "prop_id": "4015",
+    "category": "Decoration",
+    "subcategories": [
+      "(Flower)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "사과": {
+    "prop_id": "4016",
+    "category": "Decoration",
+    "subcategories": [
+      "(Flower)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "잔디1": {
+    "prop_id": "4017",
+    "category": "Decoration",
+    "subcategories": [
+      "(Flower)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "잔디2": {
+    "prop_id": "4018",
+    "category": "Decoration",
+    "subcategories": [
+      "(Flower)"
+    ],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "열쇠": {
+    "prop_id": "4019",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "울타리 모서리 방지": {
+    "prop_id": "4020",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "길1": {
+    "prop_id": "4021",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "길2": {
+    "prop_id": "4022",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "길3": {
+    "prop_id": "4023",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "길4": {
+    "prop_id": "4024",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "길5": {
+    "prop_id": "4025",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "길6": {
+    "prop_id": "4026",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "길7": {
+    "prop_id": "4027",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "길8": {
+    "prop_id": "4028",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "길9": {
+    "prop_id": "4029",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "항아리1": {
+    "prop_id": "4030",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "항아리2": {
+    "prop_id": "4031",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "주의 표지판": {
+    "prop_id": "4032",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "왼쪽 방향 표지판": {
+    "prop_id": "4033",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "오른쪽 방향 표지판": {
+    "prop_id": "4034",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "뾰죡 스파이크": {
+    "prop_id": "4035",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  },
+  "별": {
+    "prop_id": "4036",
+    "category": "Decoration",
+    "subcategories": [],
+    "layer_rule": "normal",
+    "role": "neutral"
+  }
+}
