@@ -87,7 +87,7 @@ async def on_ready():
     print(f"✅ Logged in as {client.user}")
 
 # MAP_API_URL = "http://localhost:8000/service3/generate_map_sections"
-MAP_API_URL = "http://localhost:8000/generate_map_sections"
+MAP_API_URL = "http://192.168.20.160:8000/generate_map_sections"
 
 
 @client.event

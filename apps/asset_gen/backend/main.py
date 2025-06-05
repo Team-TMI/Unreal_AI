@@ -132,6 +132,7 @@ def classify_season(labels: List[str]) -> str:
 async def detect_season_vision(file: UploadFile = File(...)):
     try:
         #  파일 읽기
+        print(file)
         image_bytes = await file.read()
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
         image_data_url = f"data:image/jpeg;base64,{image_base64}"
